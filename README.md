@@ -435,6 +435,36 @@ We welcome contributions from developers worldwide!
 - Push to the branch (`git push origin feature/amazing-feature`).
 - Open a Pull Request.
 
+## 👨‍💻 Author & Contact
+
+Developed with passion by **Sina Khanzadeh**.
+
+<p align="center">
+  <a href="https://sina-khanzadeh.ir"><img src="https://img.shields.io/badge/Website-sina--khanzadeh.ir-blue?style=for-the-badge&logo=google-chrome&logoColor=white" alt="Website"></a>
+  <a href="mailto:khanzadeh.1377@gmail.com"><img src="https://img.shields.io/badge/Email-khanzadeh.1377%40gmail.com-red?style=for-the-badge&logo=gmail&logoColor=white" alt="Email"></a>
+  <a href="https://t.me/programmer_1998"><img src="https://img.shields.io/badge/Telegram-%40programmer__1998-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white" alt="Telegram"></a>
+  <a href="https://instagram.com/programmer_1998"><img src="https://img.shields.io/badge/Instagram-%40programmer__1998-E4405F?style=for-the-badge&logo=instagram&logoColor=white" alt="Instagram"></a>
+  <a href="https://discord.com/users/@programmer_1998"><img src="https://img.shields.io/badge/Discord-%40programmer__1998-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"></a>
+  <a href="https://github.com/programmer-1998"><img src="https://img.shields.io/badge/GitHub-%40programmer--1998-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"></a>
+</p>
+
+| Channel | Contact Info |
+| :--- | :--- |
+| **🌐 Website** | [sina-khanzadeh.ir](https://sina-khanzadeh.ir) |
+| **📧 Email** | [khanzadeh.1377@gmail.com](mailto:khanzadeh.1377@gmail.com) |
+| **✈️ Telegram** | [@programmer_1998](https://t.me/programmer_1998) |
+| **📸 Instagram** | [@programmer_1998](https://instagram.com/programmer_1998) |
+| **💬 Discord** | `@programmer_1998` |
+| **🐙 GitHub** | [@programmer-1998](https://github.com/programmer-1998) |
+
+<div dir="rtl">
+
+### ارتباط با سازنده و توسعه‌دهنده
+این پروژه با افتخار توسط **سینا خان‌زاده (Sina Khanzadeh)** طراحی و توسعه داده شده است.  
+برای برقراری ارتباط، مشاوره، ارسال پیشنهادات، همکاری در پروژه‌ها یا گزارش باگ‌ها می‌توانید از طریق راه‌های ارتباطی فوق یا وب‌سایت شخصی [sina-khanzadeh.ir](https://sina-khanzadeh.ir) اقدام فرمایید.
+
+</div>
+
 ---
 
 ## 📄 License
@@ -448,3 +478,4 @@ Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for more informa
 [⭐ Star this repository](https://github.com/programmer-1998/AntiGravity-FreeModel) • [Report a Bug](https://github.com/programmer-1998/AntiGravity-FreeModel/issues) • [Request a Feature](https://github.com/programmer-1998/AntiGravity-FreeModel/issues)
 
 </div>
+
