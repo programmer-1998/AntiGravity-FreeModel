@@ -29,7 +29,12 @@ Whenever reasoning, code generation, summarization, or text generation is needed
    - NEVER default to heavy `Model: 'pro'` unless the user explicitly commands it.
    - Keep the main agent's role focused on coordination, file I/O verification, and concise user updates.
 
-## 3. Autonomous Hands-Off Operation
-- Do NOT ask the user for permission to create subagents or to route to free models.
+## 3. Code-First Execution & Deterministic Offloading (Zero Context Bloat)
+- **Execute Instead of Reading**: Whenever a task involves repetitive processing, data parsing, searching large files, bulk file transformations, mathematical calculations/counting, web scraping, directory analysis, or heavy token-consuming reasoning that can be computed algorithmically, **DO NOT** read, dump, or process all raw data in the LLM context.
+- **Disposable Computational Scripting**: Write a quick, disposable Python or Bash script, run it via terminal tools, get the compact deterministic result, and only feed the minimal summary back to the agent context.
+- **Zero Token & Context Waste**: LLM context must remain lean and clean. Reserve tokens strictly for intent synthesis, orchestration, and high-level architectural decisions. Compute deterministically with code whenever possible.
+
+## 4. Autonomous Hands-Off Operation
+- Do NOT ask the user for permission to create subagents, route to free models, or run deterministic offloading scripts.
 - Apply this orchestration seamlessly in the background on every turn without requiring user reminders.
 - Report synthesized, concise results back to the user conforming to RTL guidelines in Persian.

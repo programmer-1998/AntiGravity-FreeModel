@@ -1,41 +1,128 @@
 ---
 name: auto-orchestrator
 description: >-
-  Autonomous task decomposition and multi-agent orchestrator. Automatically splits user prompts into subagents,
-  routes tasks through a hierarchical model selector (Priority 1: Free models like Groq, Nemotron, Cohere;
+  Autonomous task decomposition, code-first deterministic offloading, and multi-agent orchestrator.
+  Automatically offloads computational, parsing, and data tasks to deterministic scripts, splits prompts into subagents,
+  and routes tasks through a hierarchical model selector (Priority 1: Free models like Groq, Nemotron, Cohere;
   Priority 2: GPT/Claude; Priority 3: Lightweight Gemini like flash_lite/flash), minimizing token consumption and accelerating responses.
 ---
 
 # Auto-Orchestrator Skill
 
-This skill governs the autonomous division of labor across subagents and external models to maximize speed and minimize Gemini token consumption.
+This skill governs the autonomous division of labor across deterministic script execution, subagents, and free external models to eliminate token anxiety, maximize speed, and prevent LLM context bloat.
 
 ## Architecture
 
 ```
-User Prompt
-    │
-    ▼
-[Decomposer & Task Classifier]
-    │
-    ├── Task 1 (e.g. Code Implementation) ──> Subagent (Model: flash_lite) ──> Router (Cohere Code / Groq)
-    ├── Task 2 (e.g. Deep Architecture)    ──> Subagent (Model: flash_lite) ──> Router (Nemotron Ultra 550B)
-    └── Task 3 (e.g. Quick Tests / Docs)   ──> Subagent (Model: flash_lite) ──> Router (Groq GPT-OSS-120B)
-    │
-    ▼
-[Main Agent: Synthesizer & Coordinator]
-    │
-    ▼
-Final Response to User (Persian RTL)
+User Prompt / Task
+        │
+        ▼
+[Task Classifier & Decomposer]
+        │
+        ├───────────────────────────────────────────────────────┐
+        ▼                                                       ▼
+[Algorithmic / Data / Parsing Tasks]           [Generative / Architecture Tasks]
+        │                                                       │
+  Code-First Deterministic Offloading               Multi-Agent Subagent Cascade
+        │                                                       │
+  • Write disposable Python/Bash script              • Subagent (Model: flash_lite)
+  • Execute in terminal (0 tokens)                   • router.py (Cohere / Groq / Nemotron)
+  • Return compact summary/JSON                      • Zero-token external inference
+        │                                                       │
+        └───────────────────────┬───────────────────────────────┘
+                                │
+                                ▼
+               [Main Agent: Synthesizer & Coordinator]
+                                │
+                                ▼
+               Final Clean Response to User (Persian RTL)
 ```
+
+---
+
+## ⚡ Code-First Offloading & Computational Scripting
+
+> **Core Philosophy**: Never let an LLM do what 5 lines of Python or Bash can calculate deterministically in 10ms with zero token cost.
+
+### When to Offload Deterministically:
+
+1. **Large File Search & Log Inspection**: Searching through megabytes of logs, text files, or source trees.
+2. **Data Parsing & Transformation**: Extracting specific keys or filtering massive JSON, YAML, CSV, or XML documents.
+3. **Counting, Math & Statistics**: Line counts, frequency distributions, token estimations, arithmetic, or financial formulas.
+4. **Codebase & Directory Auditing**: Analyzing import graphs, dead code, file sizes, or AST trees.
+5. **Web Scraping & DOM Extraction**: Extracting specific clean fields or tables rather than dumping full HTML pages into context.
+
+---
+
+### Execution Patterns & Concrete Workflows
+
+#### Pattern 1: Inline Disposable One-Liners (`python3 -c` / `jq` / `awk`)
+Use for immediate calculations, aggregations, or key extractions without cluttering disk or context.
+
+```bash
+# Example: Count occurrences of specific error codes in a 50MB log file
+python3 -c "
+import collections, re
+with open('app.log') as f:
+    counts = collections.Counter(re.findall(r'HTTP 5\d\d', f.read()))
+print(dict(counts))
+"
+```
+*Result in context*: `{'HTTP 500': 142, 'HTTP 502': 12, 'HTTP 504': 3}` instead of 500,000 tokens of raw log text!
+
+#### Pattern 2: Scratchpad Extraction Script
+For multi-step file manipulation, AST inspection, or bulk transformations, write a temporary script under `/tmp` or scratchpad:
+
+```python
+# /tmp/filter_schema.py
+import json
+
+with open("massive_schema.json", "r") as f:
+    data = json.load(f)
+
+# Extract only relevant endpoint paths and response schemas
+compact = {
+    path: list(methods.keys())
+    for path, methods in data.get("paths", {}).items()
+    if "/api/v2" in path
+}
+
+with open("/tmp/schema_summary.json", "w") as f:
+    json.dump(compact, f, indent=2)
+
+print(f"Extracted {len(compact)} endpoints.")
+```
+
+Run via terminal, then read only `/tmp/schema_summary.json`.
+
+#### Pattern 3: Bulk File Refactoring & AST Analysis
+Instead of opening dozens of files via agent tools, use Python's `ast` or regex to parse and transform:
+
+```bash
+# Example: Find all circular imports or missing type annotations across 100 modules
+python3 -c "
+import ast, glob
+
+for file in glob.glob('src/**/*.py', recursive=True):
+    with open(file) as f:
+        tree = ast.parse(f.read())
+        for node in ast.walk(tree):
+            if isinstance(node, ast.FunctionDef) and node.returns is None:
+                print(f'{file}:{node.name} missing return type')
+"
+```
+
+---
 
 ## Model Priority Matrix
 
+For tasks that genuinely require language generation, conceptual reasoning, or code drafting:
+
 1. **Tier 1: Free External Models (Groq / OpenRouter Free)**
-   - Groq `openai/gpt-oss-120b`: Ultra high-speed reasoning and drafting.
+   - Groq `openai/gpt-oss-120b`: Ultra high-speed reasoning and drafting (~300 T/s).
    - Cohere `cohere/north-mini-code:free`: Specialized code synthesis and bug fixing.
    - Nemotron Ultra `nvidia/nemotron-3-ultra-550b-a55b:free`: Massive 550B model for deep architectural reasoning.
-   - Gemma 4 `google/gemma-4-31b-it:free`: Balanced general queries.
+   - Gemma 4 `google/gemma-4-31b-it:free`: Balanced general queries and documentation.
    - Nemotron Lightning `nvidia/nemotron-3.5-lightning:free`: Fast multi-turn logic.
 
 2. **Tier 2: GPT & Claude Models (External Paid/Configured)**
@@ -44,6 +131,8 @@ Final Response to User (Persian RTL)
 3. **Tier 3: Lightweight Gemini (`flash_lite` / `flash`)**
    - Subagents are always spawned with `Model: 'flash_lite'` or `'flash'`.
    - Never default to heavy `Model: 'pro'`.
+
+---
 
 ## Execution Utility
 

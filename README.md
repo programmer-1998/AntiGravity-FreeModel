@@ -2,8 +2,9 @@
 
 # 🚀 AntiGravity-FreeModel
 
-### **Autonomous Subagent Orchestrator & Free Model Cascade for Google Antigravity (AGY)**
+### **Autonomous Subagent Orchestrator, Code-First Deterministic Offloading & Free Model Cascade for Google Antigravity (AGY)**
 
+[![Release: v1.1.0](https://img.shields.io/badge/Release-v1.1.0_Code--First_Offloading-8A2BE2.svg?style=for-the-badge)](https://github.com/programmer-1998/AntiGravity-FreeModel)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 [![Python: 3.8+](https://img.shields.io/badge/Python-3.8+-3776AB.svg?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![Gemini Ecosystem](https://img.shields.io/badge/Antigravity-Plugin-4285F4.svg?style=for-the-badge&logo=google&logoColor=white)](https://gemini.google.com)
@@ -13,10 +14,11 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge)](https://github.com/programmer-1998/AntiGravity-FreeModel/pulls)
 
 <p align="center">
-  <b>Eliminate token anxiety in Antigravity.</b> Seamlessly route code generation, debugging, deep reasoning, and boilerplate creation to top-tier free external models (<b>Groq LPUs</b>, <b>NVIDIA Nemotron Ultra 550B</b>, <b>Cohere Code</b>, and <b>Gemma 4</b>) while letting Gemini coordinate in lightweight mode.
+  <b>Eliminate token anxiety and context bloat in Antigravity.</b><br>
+  Execute instead of reading with <b>Code-First Deterministic Offloading</b>, and seamlessly route code generation, debugging, and deep reasoning to top-tier free external models (<b>Groq LPUs</b>, <b>NVIDIA Nemotron Ultra 550B</b>, <b>Cohere Code</b>, and <b>Gemma 4</b>) while letting Gemini coordinate in lightweight mode.
 </p>
 
-[Key Features](#-key-features) • [Architecture](#-architecture--how-it-works) • [Model Hierarchy](#-model-hierarchy--comparison) • [Installation](#-installation-guide) • [Free API Keys](#-obtaining-free-api-keys) • [CLI Usage](#-cli--script-reference) • [راهنمای فارسی](#-راهنمای-جامع-فارسی-persian-documentation)
+[Key Features](#-key-features) • [Code-First Offloading](#-code-first-deterministic-offloading-v110-killer-feature) • [Architecture](#-architecture--how-it-works) • [Model Hierarchy](#-model-hierarchy--comparison) • [Installation](#-installation-guide) • [Free API Keys](#-obtaining-free-api-keys) • [CLI Usage](#-cli--script-reference) • [راهنمای فارسی](#-راهنمای-جامع-فارسی-persian-documentation)
 
 ---
 
@@ -26,6 +28,7 @@
 
 | Pain Point in Default Coding Assistants | How AntiGravity-FreeModel Solves It |
 | :--- | :--- |
+| **Context Window Bloat & Hallucination**: Dumping megabytes of raw logs, JSON schemas, CSVs, or entire file trees into LLM context wastes tens of thousands of tokens and degrades reasoning. | **Code-First Deterministic Offloading (v1.1.0)**: Executes disposable Python/Bash scripts locally. Computes filtering, math, regex, and parsing algorithmically with **ZERO context bloat** and 0 tokens. |
 | **Rapid Gemini Token Depletion**: Generating boilerplate, unit tests, and routine refactors drains daily rate limits and tokens. | **Zero-Token Burn**: 100% of heavy drafting, coding, and reasoning is offloaded to free external inference tiers. |
 | **Latency Bottlenecks**: Waiting for large monolithic models on routine code generations slows down developer velocity. | **Blazing Groq LPUs**: Groq’s custom Language Processing Units deliver 250–400+ tokens/sec with sub-second response times. |
 | **Monolithic Reasoning**: Single-context agents struggle with concurrent concerns (e.g. backend logic vs frontend styling). | **Autonomous Subagent Decomposition**: Automatically decomposes user requests into domain-specific subagents running in parallel. |
@@ -36,6 +39,7 @@
 
 ## ⚡ Key Features
 
+- **⚡ Code-First Deterministic Offloading (v1.1.0 Killer Feature)**: Never ingest massive raw data, logs, or directory trees into the LLM context. Write and execute disposable Python/Bash scripts locally in milliseconds, letting the deterministic runtime compute answers with 0 tokens and feeding only the compact, structured summary back.
 - **💸 Zero Gemini Token Burn for Heavy Tasks**: Antigravity's primary Gemini agent stays in lightweight `flash_lite` coordinator mode, handling file I/O and user summaries while external models do the heavy lifting.
 - **🤖 Autonomous Multi-Agent Decomposition**: Adheres to strict autonomous orchestration rules—complex prompts are cleanly decomposed into specialized subagents without requiring manual user intervention.
 - **⚡ Blazing Groq LPUs**: Sub-second token delivery powered by Groq's custom LPU architecture running `openai/gpt-oss-120b` and `qwen/qwen3.8-27b`.
@@ -43,6 +47,78 @@
 - **💻 Dedicated Coding Model**: Cohere North Mini Code (`cohere/north-mini-code:free`) provides specialized code synthesis, regex generation, refactoring, and lint fixing.
 - **🔄 Smart Cascade & Failover Router**: Built-in 4-tier waterfall routing automatically falls back to secondary free models if a provider experiences temporary rate limits.
 - **🔒 Zero Credential Leaks**: API keys are isolated in `config.env` or shell environment variables—no hardcoded credentials in the repository.
+
+---
+
+## 🚀 Code-First Deterministic Offloading (v1.1.0 Killer Feature)
+
+> **"Never let an LLM do what 5 lines of Python or Bash can calculate deterministically in 10ms with zero token cost."**
+
+### Why "Execute Instead of Reading"?
+
+When developers ask an AI assistant to:
+- *"Find all 500 errors in this 100MB server log"*
+- *"Extract endpoints matching `/api/v2` from this 50,000-line OpenAPI JSON"*
+- *"Count total functions without docstrings across 200 files"*
+- *"Sum transaction totals from 10 CSV reports"*
+
+Traditional AI assistants make the critical mistake of reading thousands of lines directly into the LLM context window. This causes:
+1. **Context Window Saturation**: Thousands of valuable tokens burned in a single turn.
+2. **Attention Degradation ("Lost in the Middle")**: LLMs lose precision when flooded with irrelevant raw text.
+3. **Severe Latency & Cost**: Waiting for huge context payloads to upload and process.
+
+### The Code-First Solution
+
+AntiGravity-FreeModel enforces a **Code-First Execution** rule:
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│ ❌ TRADITIONAL APPROACH: Context Bloat (50,000+ Tokens)                │
+│ Raw 50MB Log File ──> Read into LLM Context ──> LLM counts lines manually │
+└────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────┐
+│ ✅ CODE-FIRST APPROACH (AntiGravity-FreeModel v1.1.0: ZERO Bloat)       │
+│ Raw 50MB Log File ──> python3 -c "import re..." ──> {'500': 14} ──> LLM│
+│ (Computation time: 15ms | Tokens consumed: ~15 tokens | Cost: $0.00)  │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+### Real-World Offloading Patterns:
+
+#### 1. Instant Log Analysis (Regex & Counter)
+```bash
+python3 -c "
+import collections, re
+with open('var/log/nginx/access.log') as f:
+    errors = collections.Counter(re.findall(r'\" (5\d\d) ', f.read()))
+print(dict(errors))
+"
+# Output to agent: {'500': 23, '502': 4}
+```
+
+#### 2. Deep Schema / Large JSON Extraction
+```python
+# Disposable script parses a 10MB schema and emits only the target routes:
+import json
+with open("openapi.json") as f:
+    data = json.load(f)
+routes = [p for p in data.get("paths", {}) if "/checkout" in p]
+print(json.dumps(routes, indent=2))
+```
+
+#### 3. Codebase AST & Dependency Auditing
+```bash
+python3 -c "
+import ast, glob
+for path in glob.glob('src/**/*.py', recursive=True):
+    with open(path) as f:
+        tree = ast.parse(f.read())
+        for node in ast.walk(tree):
+            if isinstance(node, ast.FunctionDef) and not ast.get_docstring(node):
+                print(f'{path}:{node.name}')
+"
+```
 
 ---
 
@@ -55,10 +131,18 @@ flowchart TD
     User([👤 User Prompt / Task]) --> AGY[🛸 Google Antigravity Primary Agent]
     AGY --> Rules[📜 Auto-Orchestrator Rules Engine]
     
-    subgraph Decomp [Autonomous Decomposition]
-        Rules --> SubCoder[🤖 Subagent 1: Coder\nModel: flash_lite]
-        Rules --> SubArch[🤖 Subagent 2: Architect\nModel: flash_lite]
-        Rules --> SubTest[🤖 Subagent 3: QA / Docs\nModel: flash_lite]
+    Rules --> Classifier{Task Nature?}
+
+    subgraph DeterministicOffload [Code-First Execution: Zero Context Bloat]
+        Classifier -->|Algorithmic / Data / Parsing| ScriptGen[🐍 Disposable Python/Bash Script]
+        ScriptGen --> LocalExec[⚡ Terminal Execution 10ms / 0 Tokens]
+        LocalExec --> CompactResult[📊 Compact JSON / Summary Result]
+    end
+
+    subgraph Decomp [Autonomous Decomposition: Generative Tasks]
+        Classifier -->|Generative / Logic / Coding| SubCoder[🤖 Subagent 1: Coder\nModel: flash_lite]
+        Classifier -->|Architectural Design| SubArch[🤖 Subagent 2: Architect\nModel: flash_lite]
+        Classifier -->|Quick Q&A / Review| SubTest[🤖 Subagent 3: Fast\nModel: flash_lite]
     end
 
     subgraph RouterEngine [Multi-Model Cascade Router router.py]
@@ -73,7 +157,8 @@ flowchart TD
         CascadeTest --> GroqLPU[⚡ Groq Cloud LPUs\n300+ tok/s]
     end
 
-    FreeProviders --> Synthesizer[🧩 Workspace Verification & Response Synthesis]
+    CompactResult --> Synthesizer[🧩 Workspace Verification & Response Synthesis]
+    FreeProviders --> Synthesizer
     Synthesizer --> UserResponse([✅ Final Clean Solution & Diffs to User])
 ```
 
@@ -86,30 +171,30 @@ flowchart TD
                                          │
                                          ▼
                         ┌─────────────────────────────────┐
-                        │   Decomposer & Task Classifier  │
+                        │   Task Classifier & Decomposer  │
                         │     (Auto-Orchestrator Rule)    │
                         └────────┬───────────────┬────────┘
                                  │               │
-               ┌─────────────────┴─┐           ┌─┴─────────────────┐
-               │                   │           │                   │
-               ▼                   ▼           ▼                   ▼
-  ┌─────────────────────────┐                         ┌─────────────────────────┐
-  │ Subagent 1: Coder       │                         │ Subagent 2: Architect   │
-  │ Task: Implement & Debug │                         │ Task: Deep Logic & Spec │
-  └────────────┬────────────┘                         └────────────┬────────────┘
-               │                                                   │
-               ▼                                                   ▼
-  ┌─────────────────────────┐                         ┌─────────────────────────┐
-  │ Cohere Code / Groq LPU  │                         │ Nemotron Ultra 550B     │
-  │ (100% Free / Zero Token)│                         │ (100% Free / Zero Token)│
-  └────────────┬────────────┘                         └────────────┬────────────┘
-               │                                                   │
-               └─────────────────┬───────────────┬─────────────────┘
-                                 │               │
+        [Algorithmic / Parsing]  │               │  [Generative / Reasoning]
                                  ▼               ▼
+        ┌────────────────────────────────┐     ┌─────────────────────────────────┐
+        │  Code-First Offloading Engine  │     │   Autonomous Subagent Cascade   │
+        │  • Disposable Python/Bash      │     │   • Coder (flash_lite)          │
+        │  • Deterministic Terminal Exec │     │   • Architect (flash_lite)      │
+        └───────────────┬────────────────┘     └───────────────┬─────────────────┘
+                        │                                      │
+                        ▼                                      ▼
+        ┌────────────────────────────────┐     ┌─────────────────────────────────┐
+        │   Zero-Token Compact Summary   │     │ Cohere Code / Groq / Nemotron   │
+        │   (0 context bloat, 10ms)      │     │ (100% Free Inference Tier)      │
+        └───────────────┬────────────────┘     └───────────────┬─────────────────┘
+                        │                                      │
+                        └────────────────┬─────────────────────┘
+                                         │
+                                         ▼
                         ┌─────────────────────────────────┐
                         │  Workspace Diffs & Verification │
-                        │      Synthesized Response       │
+                        │    Synthesized Final Response   │
                         └─────────────────────────────────┘
 ```
 
@@ -314,13 +399,13 @@ AntiGravity-FreeModel/
 ├── config.env.example              # Key configuration template
 ├── install.sh                      # Automated installer script (symlink/copy)
 ├── LICENSE                         # MIT Open Source License
-├── plugin.json                     # Antigravity plugin manifest
+├── plugin.json                     # Antigravity plugin manifest (v1.1.0)
 ├── README.md                       # Comprehensive documentation
 ├── rules/
-│   └── AGENTS.md                   # Strict autonomous subagent & token minimizer rules
+│   └── AGENTS.md                   # Strict autonomous subagent, offloading & token minimizer rules
 └── skills/
     └── auto-orchestrator/
-        ├── SKILL.md                # Orchestration skill definition
+        ├── SKILL.md                # Orchestration skill definition & offloading workflows
         └── scripts/
             └── router.py           # Multi-model cascade router runner
 ```
@@ -333,20 +418,32 @@ AntiGravity-FreeModel/
 
 ### مقدمه و هدف پروژه
 
-پلاگین **AntiGravity-FreeModel** (موتور ارکستراتور خودکار ساب‌ایجنت‌ها و روتر مدل‌های آزاد) با هدف **به صفر رساندن مصرف توکن‌های گران‌قیمت جمنای** و **افزایش چشمگیر سرعت تولید کد** در محیط **Google Antigravity (AGY)** توسعه داده شده است.
+پلاگین **AntiGravity-FreeModel** (موتور ارکستراتور خودکار ساب‌ایجنت‌ها، اجرای مستقیم کد و روتر مدل‌های آزاد) با هدف **به صفر رساندن مصرف توکن‌های گران‌قیمت جمنای**، **جلوگیری از اشباع حافظه (Context Bloat)** و **افزایش چشمگیر سرعت توسعه** در محیط **Google Antigravity (AGY)** طراحی شده است.
 
-در حالت پیش‌فرض، سپردن تسک‌های سنگین مانند نوشتن کدهای تکراری، ساخت تست‌ها، مستندسازی و ریفکتور به جمنای، باعث مصرف سریع سهمیه روزانه و رسیدن به سقف توکن‌ها می‌شود. این پلاگین با تفکیک هوشمند وظایف، کلیه پردازش‌های متنی و کدی سنگین را به مدل‌های پرچمدار و کاملاً رایگان منتقل می‌کند.
+در نسخه **v1.1.0**، قابلیت انقلابی **Code-First Deterministic Offloading** (اجرای مستقیم کد به جای خواندن فایل در حافظه مدل) افزوده شده است تا هیچ توکنی صرف پردازش لاگ‌ها، جستجو در سورس‌کدهای حجیم یا محاسبات ریاضی نشود.
 
 ---
 
 ### 🌟 مزایای کلیدی:
 
-1. **مصرف توکن جمنای نزدیک به صفر**: مدل جمنای صرفاً در نقش سبک (`flash_lite`) به عنوان هماهنگ‌کننده و مدیر فایل‌ها فعالیت کرده و توکن‌های سنگین را حفظ می‌کند.
-2. **سرعت خارق‌العاده با پردازنده‌های Groq LPU**: تحویل ۳۰۰ تا ۴۰۰ توکن در ثانیه با تأخیر کمتر از ۱ ثانیه به کمک چیپ‌های اختصاصی Groq.
-3. **بهره‌مندی رایگان از مدل ۵۵۰ میلیاردی Nemotron Ultra**: دسترسی آزاد به پرچمدار غول‌پیکر شرکت انویدیا برای پیچیده‌ترین مسائل معماری سیستم، الگوریتم‌ها و استدلال‌های عمیق.
-4. **مدل تخصصی برنامه‌نویسی Cohere North Mini Code**: بهینه‌سازی شده برای سنتز سریع کدهای پایتون، جاوااسکریپت، تایپ‌اسکریپت، گو، راست، دیباگ و تولید عبارات منظم.
-5. **معماری فال‌بک خودکار (Cascade Failover)**: در صورت بروز خطای محدودیت نرخ (Rate-limit) در یک سرویس‌دهنده، روتر بلافاصله و بدون وقفه به مدل رایگان بعدی سوئیچ می‌کند.
-6. **امنیت کامل کلیدها**: کلیدهای محرمانه شما به هیچ عنوان وارد مخزن گیت نشده و صرفاً در فایل محلی `config.env` نگهداری می‌شوند.
+1. **قابلیت انقلابی Code-First Offloading (نسخه ۱.۱.۰)**: به جای ارسال ده‌ها هزار خط لاگ، اسناد حجیم JSON یا درخت فایل‌ها به حافظه کانتکست ایجنت، این تسک‌ها به اسکریپت‌های سبک پایتون و بش محول شده و تنها نتیجه خلاصه و دقیق به کانتکست بازگردانده می‌شود.
+2. **مصرف توکن جمنای نزدیک به صفر**: مدل جمنای صرفاً در نقش سبک (`flash_lite`) به عنوان هماهنگ‌کننده و مدیر فایل‌ها فعالیت کرده و توکن‌های سنگین را حفظ می‌کند.
+3. **سرعت خارق‌العاده با پردازنده‌های Groq LPU**: تحویل ۳۰۰ تا ۴۰۰ توکن در ثانیه با تأخیر کمتر از ۱ ثانیه به کمک چیپ‌های اختصاصی Groq.
+4. **بهره‌مندی رایگان از مدل ۵۵۰ میلیاردی Nemotron Ultra**: دسترسی آزاد به پرچمدار غول‌پیکر شرکت انویدیا برای پیچیده‌ترین مسائل معماری سیستم، الگوریتم‌ها و استدلال‌های عمیق.
+5. **مدل تخصصی برنامه‌نویسی Cohere North Mini Code**: بهینه‌سازی شده برای سنتز سریع کدهای پایتون، جاوااسکریپت، تایپ‌اسکریپت، گو، راست، دیباگ و تولید عبارات منظم.
+6. **معماری فال‌بک خودکار (Cascade Failover)**: در صورت بروز خطای محدودیت نرخ (Rate-limit) در یک سرویس‌دهنده، روتر بلافاصله و بدون وقفه به مدل رایگان بعدی سوئیچ می‌کند.
+7. **امنیت کامل کلیدها**: کلیدهای محرمانه شما به هیچ عنوان وارد مخزن گیت نشده و صرفاً در فایل محلی `config.env` نگهداری می‌شوند.
+
+---
+
+### 💡 استراتژی Code-First: چرا اجرا به جای خواندن؟
+
+هنگامی که از هوش مصنوعی می‌خواهید لاگ‌های خطای سرور را تحلیل کند یا فیلدهای خاصی را از یک JSON ده‌مگابایتی استخراج نماید، رویکرد سنتی تمام فایل را درون پنجره کانتکست بارگذاری می‌کند. این کار سبب:
+- سوختن ده‌ها هزار توکن باارزش در یک پیام؛
+- افت تمرکز مدل و بروز توهم (Hallucination) به دلیل شلوغی کانتکست؛
+- و افزایش زمان انتظار می‌شود.
+
+در **AntiGravity-FreeModel**، ایجنت به صورت خودکار یک خط کد پایتون یا بش تولید کرده، آن را در چند میلی‌ثانیه در ترمینال اجرا نموده و تنها خروجی خلاصه و مشخص (مثلاً `{'500': 14}`) را وارد کانتکست می‌کند. نتیجه: **مصرف صفر توکن برای پردازش داده‌های خام و سرعت فوق‌العاده**.
 
 ---
 
@@ -419,10 +516,11 @@ nano config.env
 ## 🗺️ Roadmap & Future Enhancements
 
 - [x] **v1.0.0**: Initial release featuring Groq LPUs, OpenRouter Free models, automatic cascade fallback, and autonomous subagent decomposition.
-- [ ] **v1.1.0**: Integration of DeepSeek-V3 & DeepSeek-R1 free community endpoints.
-- [ ] **v1.2.0**: Local Ollama & vLLM zero-latency fallback integration for offline environments.
-- [ ] **v1.3.0**: Dynamic response caching layer with SQLite/Redis to avoid duplicate queries.
-- [ ] **v1.4.0**: Interactive visual metrics sidecar displaying token savings and latency statistics inside Antigravity.
+- [x] **v1.1.0**: **Code-First Deterministic Offloading & Computational Scripting** (Execute Instead of Reading, Zero Context Bloat).
+- [ ] **v1.2.0**: Integration of DeepSeek-V3 & DeepSeek-R1 free community endpoints.
+- [ ] **v1.3.0**: Local Ollama & vLLM zero-latency fallback integration for offline environments.
+- [ ] **v1.4.0**: Dynamic response caching layer with SQLite/Redis to avoid duplicate queries.
+- [ ] **v1.5.0**: Interactive visual metrics sidecar displaying token savings and latency statistics inside Antigravity.
 
 ---
 
@@ -478,4 +576,3 @@ Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for more informa
 [⭐ Star this repository](https://github.com/programmer-1998/AntiGravity-FreeModel) • [Report a Bug](https://github.com/programmer-1998/AntiGravity-FreeModel/issues) • [Request a Feature](https://github.com/programmer-1998/AntiGravity-FreeModel/issues)
 
 </div>
-
