@@ -1,0 +1,5 @@
+{
+  "name": "auto-orchestrator",
+  "description": "Autonomous Subagent Orchestrator with Multi-Model Hierarchy (Free Models -> GPT/Claude -> Light Gemini) for maximum speed and minimal token consumption",
+  "version": "1.0.0"
+}
