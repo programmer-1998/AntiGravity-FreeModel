@@ -72,6 +72,11 @@ elif [ -d "$TARGET_DIR" ]; then
     BACKUP_DIR="${TARGET_DIR}.backup.$(date +%Y%m%d%H%M%S)"
     echo "[!] Existing directory found at $TARGET_DIR. Backing up to $BACKUP_DIR..."
     mv "$TARGET_DIR" "$BACKUP_DIR"
+    # Preserve existing config.env if present
+    if [ -f "$BACKUP_DIR/config.env" ] && [ ! -f "$SCRIPT_DIR/config.env" ]; then
+        cp "$BACKUP_DIR/config.env" "$SCRIPT_DIR/config.env"
+        echo "[+] Restored existing config.env from previous installation."
+    fi
 fi
 
 # 5. Perform installation
