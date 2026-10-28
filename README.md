@@ -2,9 +2,9 @@
 
 # 🚀 AntiGravity-FreeModel
 
-### **Autonomous Subagent Orchestrator, Code-First Deterministic Offloading & Free Model Cascade for Google Antigravity (AGY)**
+### **Autonomous Subagent Orchestrator, Code-First Deterministic Offloading, Universal Command Timeout Guard & Free Model Cascade for Google Antigravity (AGY)**
 
-[![Release: v1.1.0](https://img.shields.io/badge/Release-v1.1.0_Code--First_Offloading-8A2BE2.svg?style=for-the-badge)](https://github.com/programmer-1998/AntiGravity-FreeModel)
+[![Release: v1.2.0](https://img.shields.io/badge/Release-v1.2.0_Execution_Watchdog-8A2BE2.svg?style=for-the-badge)](https://github.com/programmer-1998/AntiGravity-FreeModel)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 [![Python: 3.8+](https://img.shields.io/badge/Python-3.8+-3776AB.svg?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![Gemini Ecosystem](https://img.shields.io/badge/Antigravity-Plugin-4285F4.svg?style=for-the-badge&logo=google&logoColor=white)](https://gemini.google.com)
@@ -14,11 +14,11 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge)](https://github.com/programmer-1998/AntiGravity-FreeModel/pulls)
 
 <p align="center">
-  <b>Eliminate token anxiety and context bloat in Antigravity.</b><br>
-  Execute instead of reading with <b>Code-First Deterministic Offloading</b>, and seamlessly route code generation, debugging, and deep reasoning to top-tier free external models (<b>Groq LPUs</b>, <b>NVIDIA Nemotron Ultra 550B</b>, <b>Cohere Code</b>, and <b>Gemma 4</b>) while letting Gemini coordinate in lightweight mode.
+  <b>Eliminate token anxiety, context bloat, and hanging terminal processes in Antigravity.</b><br>
+  Execute instead of reading with <b>Code-First Deterministic Offloading</b>, guard terminal commands with <b>Universal Timeout & Execution Watchdog</b>, and seamlessly route code generation, debugging, and deep reasoning to top-tier free external models (<b>Groq LPUs</b>, <b>NVIDIA Nemotron Ultra 550B</b>, <b>Cohere Code</b>, and <b>Gemma 4</b>) while letting Gemini coordinate in lightweight mode.
 </p>
 
-[Key Features](#-key-features) • [Code-First Offloading](#-code-first-deterministic-offloading-v110-killer-feature) • [Architecture](#-architecture--how-it-works) • [Model Hierarchy](#-model-hierarchy--comparison) • [Installation](#-installation-guide) • [Free API Keys](#-obtaining-free-api-keys) • [CLI Usage](#-cli--script-reference) • [راهنمای فارسی](#-راهنمای-جامع-فارسی-persian-documentation)
+[Key Features](#-key-features) • [Code-First Offloading](#-code-first-deterministic-offloading-v110-killer-feature) • [Timeout Watchdog](#-universal-command-timeout--execution-watchdog-v120) • [Architecture](#-architecture--how-it-works) • [Model Hierarchy](#-model-hierarchy--comparison) • [Installation](#-installation-guide) • [Free API Keys](#-obtaining-free-api-keys) • [CLI Usage](#-cli--script-reference) • [راهنمای فارسی](#-راهنمای-جامع-فارسی-persian-documentation)
 
 ---
 
@@ -29,6 +29,7 @@
 | Pain Point in Default Coding Assistants | How AntiGravity-FreeModel Solves It |
 | :--- | :--- |
 | **Context Window Bloat & Hallucination**: Dumping megabytes of raw logs, JSON schemas, CSVs, or entire file trees into LLM context wastes tens of thousands of tokens and degrades reasoning. | **Code-First Deterministic Offloading (v1.1.0)**: Executes disposable Python/Bash scripts locally. Computes filtering, math, regex, and parsing algorithmically with **ZERO context bloat** and 0 tokens. |
+| **Hanging Terminal Tasks & Unbounded Freezes**: Scripts or background commands stalling indefinitely on I/O, network lags, or infinite loops freeze the agent and developer. | **Universal Execution Watchdog (v1.2.0)**: Automatically bounds every terminal execution with configurable timeout guards (`timeout 30s-60s`), diagnoses stalls (exit code 124), and proactively asks the user to extend timeout, kill, or pivot. |
 | **Rapid Gemini Token Depletion**: Generating boilerplate, unit tests, and routine refactors drains daily rate limits and tokens. | **Zero-Token Burn**: 100% of heavy drafting, coding, and reasoning is offloaded to free external inference tiers. |
 | **Latency Bottlenecks**: Waiting for large monolithic models on routine code generations slows down developer velocity. | **Blazing Groq LPUs**: Groq’s custom Language Processing Units deliver 250–400+ tokens/sec with sub-second response times. |
 | **Monolithic Reasoning**: Single-context agents struggle with concurrent concerns (e.g. backend logic vs frontend styling). | **Autonomous Subagent Decomposition**: Automatically decomposes user requests into domain-specific subagents running in parallel. |
@@ -40,6 +41,7 @@
 ## ⚡ Key Features
 
 - **⚡ Code-First Deterministic Offloading (v1.1.0 Killer Feature)**: Never ingest massive raw data, logs, or directory trees into the LLM context. Write and execute disposable Python/Bash scripts locally in milliseconds, letting the deterministic runtime compute answers with 0 tokens and feeding only the compact, structured summary back.
+- **🛡️ Universal Command Timeout & Execution Watchdog (v1.2.0)**: Never let any terminal command or background task hang indefinitely. Enforces strict execution boundaries (`timeout 30s/60s`), detects stalls (exit code 124), provides instant root-cause analysis, and interactively offers users options to increase the timeout limit, kill the task, or adapt the approach.
 - **💸 Zero Gemini Token Burn for Heavy Tasks**: Antigravity's primary Gemini agent stays in lightweight `flash_lite` coordinator mode, handling file I/O and user summaries while external models do the heavy lifting.
 - **🤖 Autonomous Multi-Agent Decomposition**: Adheres to strict autonomous orchestration rules—complex prompts are cleanly decomposed into specialized subagents without requiring manual user intervention.
 - **⚡ Blazing Groq LPUs**: Sub-second token delivery powered by Groq's custom LPU architecture running `openai/gpt-oss-120b` and `qwen/qwen3.8-27b`.
@@ -119,6 +121,53 @@ for path in glob.glob('src/**/*.py', recursive=True):
                 print(f'{path}:{node.name}')
 "
 ```
+
+---
+
+## 🛡️ Universal Command Timeout & Execution Watchdog (v1.2.0)
+
+> **"Never let a terminal command hang indefinitely, stall in silence, or freeze agent workflows without explanation."**
+
+### Why Command Timeout & Watchdog Guards Matter
+When developers and autonomous agents execute tasks in the terminal (such as deterministic data filtering, build processes, package installations, or background test suites), unexpected hangs frequently occur:
+1. **Interactive Prompt Blocks**: A tool waiting for unbuffered user stdin (e.g. `[y/N]` confirmation prompts).
+2. **Network Bottlenecks**: Lingering HTTP downloads or unresponsive remote registries.
+3. **Infinite Loops & Deadlocks**: Algorithmic flaws in scripts causing 100% CPU lock or lock contention.
+4. **Silent Background Stalls**: Background tasks that stop producing output while the agent waits endlessly.
+
+### The Watchdog Solution
+AntiGravity-FreeModel enforces a universal watchdog policy across **all** terminal executions:
+
+```text
+┌────────────────────────────────────────────────────────────────────────┐
+│ ❌ WITHOUT WATCHDOG: Command hangs forever ──> Agent freezes in limbo   │
+└────────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────────┐
+│ ✅ WITH UNIVERSAL WATCHDOG (v1.2.0): Bounded Execution & Smart Report  │
+│ Command ──> timeout 30s/60s ──> Exceeded? (Exit Code 124)               │
+│      │                                                                 │
+│      ▼                                                                 │
+│ Proactive Persian RTL Report & Interactive Decision:                   │
+│ • "The command exceeded the 30s timeout limit."                       │
+│ • Identified Cause: Stalled network download / heavy build             │
+│ • Options: 1) Increase Timeout (e.g. 2m/5m)  2) Kill  3) Alternative   │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+#### Safe Execution Patterns:
+```bash
+# Standard command with bounded 30s execution:
+timeout 30s python3 process_data.py
+
+# Resilient pipeline with SIGKILL backup:
+timeout --kill-after=5s 60s npm test
+```
+
+When a task exceeds its threshold or exits with code `124`:
+- The agent **never** retries in a blind infinite loop.
+- It immediately analyzes the root cause and reports the situation clearly to the user.
+- It proactively offers interactive choices: **increase the timeout duration**, **kill/cancel the task**, or **switch to an alternative approach**.
 
 ---
 
@@ -399,7 +448,7 @@ AntiGravity-FreeModel/
 ├── config.env.example              # Key configuration template
 ├── install.sh                      # Automated installer script (symlink/copy)
 ├── LICENSE                         # MIT Open Source License
-├── plugin.json                     # Antigravity plugin manifest (v1.1.0)
+├── plugin.json                     # Antigravity plugin manifest (v1.2.0)
 ├── README.md                       # Comprehensive documentation
 ├── rules/
 │   └── AGENTS.md                   # Strict autonomous subagent, offloading & token minimizer rules
@@ -420,19 +469,20 @@ AntiGravity-FreeModel/
 
 پلاگین **AntiGravity-FreeModel** (موتور ارکستراتور خودکار ساب‌ایجنت‌ها، اجرای مستقیم کد و روتر مدل‌های آزاد) با هدف **به صفر رساندن مصرف توکن‌های گران‌قیمت جمنای**، **جلوگیری از اشباع حافظه (Context Bloat)** و **افزایش چشمگیر سرعت توسعه** در محیط **Google Antigravity (AGY)** طراحی شده است.
 
-در نسخه **v1.1.0**، قابلیت انقلابی **Code-First Deterministic Offloading** (اجرای مستقیم کد به جای خواندن فایل در حافظه مدل) افزوده شده است تا هیچ توکنی صرف پردازش لاگ‌ها، جستجو در سورس‌کدهای حجیم یا محاسبات ریاضی نشود.
+در نسخه **v1.2.0**، علاوه بر قابلیت **Code-First Deterministic Offloading** (اجرای مستقیم کد به جای خواندن فایل در حافظه مدل)، سیستم سراسری **Universal Command Timeout & Execution Watchdog** افزوده شده است تا هیچ دستور ترمینال یا تسک پس‌زمینه‌ای هرگز در حالت معلق (Hang) نماند و در صورت نیاز به زمان بیشتر، به صورت هوشمند و تعاملی از کاربر اجازه افزایش زمان دریافت شود.
 
 ---
 
 ### 🌟 مزایای کلیدی:
 
 1. **قابلیت انقلابی Code-First Offloading (نسخه ۱.۱.۰)**: به جای ارسال ده‌ها هزار خط لاگ، اسناد حجیم JSON یا درخت فایل‌ها به حافظه کانتکست ایجنت، این تسک‌ها به اسکریپت‌های سبک پایتون و بش محول شده و تنها نتیجه خلاصه و دقیق به کانتکست بازگردانده می‌شود.
-2. **مصرف توکن جمنای نزدیک به صفر**: مدل جمنای صرفاً در نقش سبک (`flash_lite`) به عنوان هماهنگ‌کننده و مدیر فایل‌ها فعالیت کرده و توکن‌های سنگین را حفظ می‌کند.
-3. **سرعت خارق‌العاده با پردازنده‌های Groq LPU**: تحویل ۳۰۰ تا ۴۰۰ توکن در ثانیه با تأخیر کمتر از ۱ ثانیه به کمک چیپ‌های اختصاصی Groq.
-4. **بهره‌مندی رایگان از مدل ۵۵۰ میلیاردی Nemotron Ultra**: دسترسی آزاد به پرچمدار غول‌پیکر شرکت انویدیا برای پیچیده‌ترین مسائل معماری سیستم، الگوریتم‌ها و استدلال‌های عمیق.
-5. **مدل تخصصی برنامه‌نویسی Cohere North Mini Code**: بهینه‌سازی شده برای سنتز سریع کدهای پایتون، جاوااسکریپت، تایپ‌اسکریپت، گو، راست، دیباگ و تولید عبارات منظم.
-6. **معماری فال‌بک خودکار (Cascade Failover)**: در صورت بروز خطای محدودیت نرخ (Rate-limit) در یک سرویس‌دهنده، روتر بلافاصله و بدون وقفه به مدل رایگان بعدی سوئیچ می‌کند.
-7. **امنیت کامل کلیدها**: کلیدهای محرمانه شما به هیچ عنوان وارد مخزن گیت نشده و صرفاً در فایل محلی `config.env` نگهداری می‌شوند.
+2. **نگهبان سراسری زمان اجرا (Watchdog - نسخه ۱.۲.۰)**: اعمال سقف زمانی ایمن بر روی تمام دستورات ترمینال، تشخیص خودکار اتمام مهلت (کد ۱۲۴)، تحلیل علت توقف، و پرسش تعاملی از کاربر برای افزایش تایم‌اوت، متوقف کردن پروسه یا تغییر رویکرد.
+3. **مصرف توکن جمنای نزدیک به صفر**: مدل جمنای صرفاً در نقش سبک (`flash_lite`) به عنوان هماهنگ‌کننده و مدیر فایل‌ها فعالیت کرده و توکن‌های سنگین را حفظ می‌کند.
+4. **سرعت خارق‌العاده با پردازنده‌های Groq LPU**: تحویل ۳۰۰ تا ۴۰۰ توکن در ثانیه با تأخیر کمتر از ۱ ثانیه به کمک چیپ‌های اختصاصی Groq.
+5. **بهره‌مندی رایگان از مدل ۵۵۰ میلیاردی Nemotron Ultra**: دسترسی آزاد به پرچمدار غول‌پیکر شرکت انویدیا برای پیچیده‌ترین مسائل معماری سیستم، الگوریتم‌ها و استدلال‌های عمیق.
+6. **مدل تخصصی برنامه‌نویسی Cohere North Mini Code**: بهینه‌سازی شده برای سنتز سریع کدهای پایتون، جاوااسکریپت، تایپ‌اسکریپت، گو، راست، دیباگ و تولید عبارات منظم.
+7. **معماری فال‌بک خودکار (Cascade Failover)**: در صورت بروز خطای محدودیت نرخ (Rate-limit) در یک سرویس‌دهنده، روتر بلافاصله و بدون وقفه به مدل رایگان بعدی سوئیچ می‌کند.
+8. **امنیت کامل کلیدها**: کلیدهای محرمانه شما به هیچ عنوان وارد مخزن گیت نشده و صرفاً در فایل محلی `config.env` نگهداری می‌شوند.
 
 ---
 
@@ -444,6 +494,20 @@ AntiGravity-FreeModel/
 - و افزایش زمان انتظار می‌شود.
 
 در **AntiGravity-FreeModel**، ایجنت به صورت خودکار یک خط کد پایتون یا بش تولید کرده، آن را در چند میلی‌ثانیه در ترمینال اجرا نموده و تنها خروجی خلاصه و مشخص (مثلاً `{'500': 14}`) را وارد کانتکست می‌کند. نتیجه: **مصرف صفر توکن برای پردازش داده‌های خام و سرعت فوق‌العاده**.
+
+---
+
+### 🛡️ مکانیزم سراسری نگهبان زمان و تایم‌اوت ترمینال (Universal Watchdog - v1.2.0)
+
+یکی از چالش‌های بزرگ در اجرای دستورات ترمینال و اسکریپت‌های تحلیلی، **گیر کردن فرآیندها (Hanging / Stalling Processes)** به دلایلی نظیر انتظار برای ورودی کاربر (`stdin` یا تاییدهای `[y/N]`)، کندی یا قطعی شبکه و دانلود، کامپایل‌های سنگین و طولانی، یا حلقه‌های نامتناهی در اسکریپت‌ها است.
+
+در نسخه **v1.2.0**، رفتار هوشمند زیر به عنوان یک قاعده سراسری پیاده‌سازی شده است:
+- **پوشش محافظتی زمانی (Timeout Guard)**: تمام دستورات ترمینال به صورت پیش‌فرض با محدودیت زمانی مشخص (مثلاً ۳۰ تا ۶۰ ثانیه) اجرا می‌شوند تا فرآیند و ایجنت هرگز معلق نمانند.
+- **تشخیص هوشمند کد خروج ۱۲۴**: در صورتی که زمان یک دستور به اتمام برسد، ابزار با کد ۱۲۴ متوقف شده و ایجنت فوراً علت احتمالی را بررسی و کشف می‌کند.
+- **گزارش شفاف به کاربر و پرسش تعاملی**: ایجنت به جای گیر کردن یا تلاش بیهوده در حلقه تکرار، وضعیت را به فارسی روان و شفاف گزارش می‌دهد؛ به کاربر اعلام می‌کند چه دستوری در حال اجرا بود و به چه دلیلی به سقف زمانی رسید، و سپس گزینه‌های زیر را پیشنهاد می‌دهد:
+  1. افزایش سقف تایم‌اوت (مثلاً ۲ یا ۵ دقیقه) و اجرای مجدد.
+  2. متوقف ساختن فرآیند معلق (Kill Task).
+  3. استفاده از یک شیوه جایگزین یا قطعه‌بندی شده (Chunked).
 
 ---
 
@@ -517,10 +581,11 @@ nano config.env
 
 - [x] **v1.0.0**: Initial release featuring Groq LPUs, OpenRouter Free models, automatic cascade fallback, and autonomous subagent decomposition.
 - [x] **v1.1.0**: **Code-First Deterministic Offloading & Computational Scripting** (Execute Instead of Reading, Zero Context Bloat).
-- [ ] **v1.2.0**: Integration of DeepSeek-V3 & DeepSeek-R1 free community endpoints.
-- [ ] **v1.3.0**: Local Ollama & vLLM zero-latency fallback integration for offline environments.
-- [ ] **v1.4.0**: Dynamic response caching layer with SQLite/Redis to avoid duplicate queries.
-- [ ] **v1.5.0**: Interactive visual metrics sidecar displaying token savings and latency statistics inside Antigravity.
+- [x] **v1.2.0**: **Universal Command Timeout Guard & Execution Watchdog** (Bounded Terminal Execution, Exit Code 124 Detection, Interactive Timeout Adjustment).
+- [ ] **v1.3.0**: Integration of DeepSeek-V3 & DeepSeek-R1 free community endpoints.
+- [ ] **v1.4.0**: Local Ollama & vLLM zero-latency fallback integration for offline environments.
+- [ ] **v1.5.0**: Dynamic response caching layer with SQLite/Redis to avoid duplicate queries.
+- [ ] **v1.6.0**: Interactive visual metrics sidecar displaying token savings and latency statistics inside Antigravity.
 
 ---
 

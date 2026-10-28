@@ -1,10 +1,11 @@
 ---
 name: auto-orchestrator
 description: >-
-  Autonomous task decomposition, code-first deterministic offloading, and multi-agent orchestrator.
-  Automatically offloads computational, parsing, and data tasks to deterministic scripts, splits prompts into subagents,
-  and routes tasks through a hierarchical model selector (Priority 1: Free models like Groq, Nemotron, Cohere;
-  Priority 2: GPT/Claude; Priority 3: Lightweight Gemini like flash_lite/flash), minimizing token consumption and accelerating responses.
+  Autonomous task decomposition, code-first deterministic offloading, universal command timeout watchdog,
+  and multi-agent orchestrator. Automatically offloads computational, parsing, and data tasks to deterministic scripts,
+  enforces execution timeouts, splits prompts into subagents, and routes tasks through a hierarchical model selector
+  (Priority 1: Free models like Groq, Nemotron, Cohere; Priority 2: GPT/Claude; Priority 3: Lightweight Gemini like flash_lite/flash),
+  minimizing token consumption and accelerating responses.
 ---
 
 # Auto-Orchestrator Skill
@@ -26,7 +27,7 @@ User Prompt / Task
   Code-First Deterministic Offloading               Multi-Agent Subagent Cascade
         │                                                       │
   • Write disposable Python/Bash script              • Subagent (Model: flash_lite)
-  • Execute in terminal (0 tokens)                   • router.py (Cohere / Groq / Nemotron)
+  • Execute with Timeout Guard (0 tokens)            • router.py (Cohere / Groq / Nemotron)
   • Return compact summary/JSON                      • Zero-token external inference
         │                                                       │
         └───────────────────────┬───────────────────────────────┘
@@ -111,6 +112,52 @@ for file in glob.glob('src/**/*.py', recursive=True):
                 print(f'{file}:{node.name} missing return type')
 "
 ```
+
+---
+
+## 🛡️ Universal Command Timeout & Execution Watchdog Pattern
+
+All terminal executions (`run_command`), background scripts, and deterministic offloading tasks MUST be guarded against indefinite hangs, deadlocks, and silent stalls.
+
+### 1. Defensive Timeout Guarding
+
+Always wrap shell commands with a defensive execution timeout:
+
+```bash
+# Standard command with 30s timeout guard
+timeout 30s <command>
+
+# Subshell or complex pipeline with graceful fallback and SIGKILL
+timeout --kill-after=5s 60s <command>
+```
+
+- **Default Timeout**: 30s to 60s for standard scripts, tests, data filtering, and queries.
+- **Heavy Operations**: Adjust to task-appropriate limits (e.g. 120s–300s) for dependency installations (`pip`, `npm`), Docker builds, or large file downloads.
+- **Synchronous Commands**: Set `WaitMsBeforeAsync` appropriately (e.g. 5000ms–10000ms) to detect fast completion without unnecessary backgrounding.
+
+---
+
+### 2. Detection & Status Diagnosis
+
+When a command terminates:
+1. **Exit Code 124**: Indicates that GNU `timeout` terminated the process because the time limit expired.
+2. **Background Tasks (`manage_task`)**: If a background task runs past its expected duration without output or heartbeat, check its status and log output via `manage_task(Action='status')`.
+3. **Analyze Root Cause**:
+   - Was the process waiting for interactive user input (`stdin`, unbuffered prompt)?
+   - Was there a network bottleneck (stalled download or API call)?
+   - Was it an infinite loop or deadlock in a script?
+   - Was it simply a resource-intensive workload needing more time?
+
+---
+
+### 3. Intelligent User Reporting & Interactive Timeout Adjustment
+
+When a command times out or hangs:
+- **NEVER** silently hang, retry in a blind loop, or throw a generic error.
+- Proactively report the exact situation in Persian RTL:
+  1. Specify the exact command and how long it ran before timing out.
+  2. Explain the suspected cause (network, heavy processing, or hanging prompt).
+  3. Proactively ask the user if they want to **increase the timeout limit** (e.g., 2m, 5m), **terminate the task**, or **switch to an alternative approach**.
 
 ---
 

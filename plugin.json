@@ -1,5 +1,5 @@
 {
   "name": "auto-orchestrator",
-  "description": "Autonomous Subagent Orchestrator with Code-First Deterministic Offloading and Multi-Model Free Cascade for maximum speed and zero context bloat",
-  "version": "1.1.0"
+  "description": "Autonomous Subagent Orchestrator with Code-First Deterministic Offloading, Universal Command Timeout Guard, and Multi-Model Free Cascade for maximum speed and zero context bloat",
+  "version": "1.2.0"
 }
